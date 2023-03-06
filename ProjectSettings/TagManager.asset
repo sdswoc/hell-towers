@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - ThePlayer
   - Map
+  - Tower
   layers:
   - Default
   - TransparentFX

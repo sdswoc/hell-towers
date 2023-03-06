@@ -29,7 +29,8 @@ public class EnemyTemplate : NetworkBehaviour
     private WaveSpawnner wave;
     private NetworkObject self;
 
-
+    //just-for-the-looks
+    [SerializeField] private SpriteRenderer sprite;
 
 
     //my functions
@@ -64,6 +65,29 @@ public class EnemyTemplate : NetworkBehaviour
     private void move()
     {
         transform.position = Vector3.MoveTowards(transform.position, nextpos, movementSpeed * Time.deltaTime);
+        Vector3 lookDir = nextpos - transform.position;
+        Vector3 rotation = new Vector3();
+
+        if (lookDir.x == 0 && lookDir.y > 0)
+        {
+            sprite.flipY = false;
+            transform.localRotation = Quaternion.Euler(rotation);
+        }
+        else if (lookDir.x == 0 && lookDir.y < 0)
+        {
+            sprite.flipY = true;
+            transform.localRotation = Quaternion.Euler(rotation);
+        }
+        else if (lookDir.y == 0 && lookDir.x > 0)
+        {
+            rotation = Vector3.forward * -90f;
+            transform.localRotation = Quaternion.Euler(rotation);
+        }
+        else
+        {
+            rotation = Vector3.forward * 90f;
+            transform.localRotation = Quaternion.Euler(rotation);
+        }
     }
 
     private void die()

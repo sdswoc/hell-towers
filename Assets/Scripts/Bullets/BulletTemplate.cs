@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class BulletTemplate : MonoBehaviour
 {
-    protected float range = 10f;
-
-
+   
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Tower"))
+        {
+            Destroy(gameObject);
+        }
+    }
 }

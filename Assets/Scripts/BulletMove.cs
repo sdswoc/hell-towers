@@ -11,4 +11,12 @@ public class BulletMove : MonoBehaviour
         transform.position += transform.right * movementSpeed * Time.deltaTime;
     }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Tower"))
+        {
+            Destroy(gameObject);
+        }
+    }
+
 }

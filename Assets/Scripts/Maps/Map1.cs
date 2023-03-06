@@ -4,18 +4,12 @@ using UnityEngine;
 
 public class Map1 : Testing
 {
-    //public static Transform initialPos;
-    //[SerializeField] private GameObject enemyPrefab;
-
-
     protected override Grid<int> generateMap(Grid<int> mapGrid)
     {
 
         for(int x = 0; x < 17; x++)
         {
-            //if( x== 0){
-            //    initialPos.position = mapGrid.GetCellCentre(0, 2);
-            //}
+
             mapGrid.SetValue(x, 2, 1);
         }
         for (int y = 2; y < 11; y++)
@@ -38,12 +32,4 @@ public class Map1 : Testing
 
 
     }
-
-    //private void Update()
-    //{
-    //    if (Input.GetKey(KeyCode.Q))
-    //    {
-    //        Instantiate(enemyPrefab, initialPos);
-    //    }
-    //}
 }

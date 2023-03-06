@@ -42,14 +42,24 @@ public class Testing : NetworkBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            basicTowerInstance = Instantiate(basicTowerPrefab);
-            basicTowerInstance.transform.position = cam.ScreenToWorldPoint(Input.mousePosition);
-            basicTowerInstance.transform.rotation = Quaternion.identity;
-            basicTowerNet = basicTowerInstance.GetComponent<NetworkObject>();
-            basicTowerNet.Spawn();
+            if (!IsServer) {
+                return;
+            }
+            spawnTowerClientRpc();
         }
     }
 
+
+    [ClientRpc]
+    public void spawnTowerClientRpc()
+    {
+        basicTowerInstance = Instantiate(basicTowerPrefab);
+        basicTowerInstance.transform.position = cam.ScreenToWorldPoint(Input.mousePosition);
+        basicTowerInstance.transform.rotation = Quaternion.identity;
+        basicTowerNet = basicTowerInstance.GetComponent<NetworkObject>();
+        basicTowerNet.transform.position = basicTowerInstance.transform.position;
+        basicTowerNet.Spawn();
+    }
 
 
     protected virtual Grid<int> generateMap(Grid<int> mapGrid)

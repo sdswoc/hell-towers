@@ -29,7 +29,8 @@ public class TowerTemplate : NetworkBehaviour
 
 
     //variables only for this script
-
+    [SerializeField] private NetworkObject netobj;
+     
 
     //variables globally may be needed
     private CircleCollider2D area;
@@ -46,11 +47,18 @@ public class TowerTemplate : NetworkBehaviour
         enemies = new List<GameObject>();
     }
 
-    public override void OnNetworkSpawn()
+    //public override void OnNetworkSpawn()
+    //{
+    //    transform.position = Testing.mapGrid.GetCellCentre(transform.position);
+    //    netobj.transform.position = transform.position;
+
+    //    base.OnNetworkSpawn();
+    //}
+
+    private void Start()
     {
         transform.position = Testing.mapGrid.GetCellCentre(transform.position);
-
-        base.OnNetworkSpawn();
+        netobj.transform.position = transform.position;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
