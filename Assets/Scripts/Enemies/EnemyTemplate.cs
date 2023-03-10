@@ -102,7 +102,7 @@ public class EnemyTemplate : NetworkBehaviour
         self.Despawn();
     }
 
-    private void takeDamage(float damage, bool canArmored)
+    public void takeDamage(float damage, bool canArmored)
     {
         if(canArmored && armorHealth > 0)
         {

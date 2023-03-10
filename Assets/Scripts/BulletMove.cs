@@ -15,7 +15,7 @@ public class BulletMove : MonoBehaviour
     {
         if (collision.CompareTag("Tower"))
         {
-            Destroy(gameObject);
+            OfflineObjectPooler.Instance.destroyFromPool("type1", gameObject);
         }
     }
 

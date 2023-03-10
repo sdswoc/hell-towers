@@ -49,7 +49,7 @@ public class PlayerTower : TowerTemplate, ITowerTemplate
 
     private void callShoot()
     {
-        Instantiate(bulletPrefab, attackPoint.position, attackPoint.rotation);
+        BulletPooler.spawnFromPool("type1", attackPoint.position, attackPoint.rotation);
         i++;
     }
 

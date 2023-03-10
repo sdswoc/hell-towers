@@ -18,7 +18,7 @@ public class ShotgunTower : TowerTemplate,ITowerTemplate
         {
             float angle = attackPoint.eulerAngles.z;
             Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, angle + Random.Range(-spread, spread)));
-            Instantiate(bulletPrefab, attackPoint.position, rotation);
+            BulletPooler.spawnFromPool("type2", attackPoint.position, rotation);
         }
         temp = timeBetweenShots;
     }

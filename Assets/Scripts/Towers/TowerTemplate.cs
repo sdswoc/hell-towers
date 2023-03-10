@@ -18,11 +18,13 @@ public class TowerTemplate : NetworkBehaviour
     [SerializeField] protected float damage;
     [SerializeField] protected float towerCost;
 
+    #region particles-based-shooting-variables
     //variablesfortheshooting
     //protected ParticleSystem system;
     //[SerializeField] private Material bulletMaterial;
     //[SerializeField] private Sprite bulletSprite;
     //[SerializeField] private LayerMask layer;
+    #endregion
 
     [SerializeField] protected GameObject bulletPrefab;
     [SerializeField] protected Transform attackPoint;
@@ -35,6 +37,9 @@ public class TowerTemplate : NetworkBehaviour
     //variables globally may be needed
     private CircleCollider2D area;
 
+
+    //for-pooling
+    protected OfflineObjectPooler BulletPooler;
 
 
     //in-built functions
@@ -57,6 +62,8 @@ public class TowerTemplate : NetworkBehaviour
 
     private void Start()
     {
+        BulletPooler = OfflineObjectPooler.Instance;
+
         transform.position = Testing.mapGrid.GetCellCentre(transform.position);
         netobj.transform.position = transform.position;
     }
@@ -86,7 +93,8 @@ public class TowerTemplate : NetworkBehaviour
             Debug.Log("Player Removed!");
         }
     }
-    
+
+    #region particle-based-shooting
     //my functions
     //protected void Summon(float speed, float lifetime, float no_of_cols, float spread)
     //{
@@ -109,7 +117,7 @@ public class TowerTemplate : NetworkBehaviour
 
     //    }
     //}
-
+    #endregion
 }
 
 public interface ITowerTemplate

@@ -15,7 +15,7 @@ public class BasicTower : TowerTemplate,ITowerTemplate
     //Interface-functions
     public void Shoot()
     {
-        Instantiate(bulletPrefab, attackPoint.position, attackPoint.rotation);
+        BulletPooler.spawnFromPool("type1", attackPoint.position, attackPoint.rotation);
         temp = timeBetweenShots;   
     }
 

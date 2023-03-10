@@ -14,7 +14,7 @@ public class CircleTower : TowerTemplate,ITowerTemplate
     {
         foreach( Transform attackPoint in attackPoints)
         {
-            Instantiate(bulletPrefab, attackPoint.position, attackPoint.rotation);
+            BulletPooler.spawnFromPool("type3", attackPoint.position, attackPoint.rotation);
         }
         temp = timeBetweenShots;
     }

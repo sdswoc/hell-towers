@@ -7,6 +7,7 @@ public class PlayerMove : NetworkBehaviour
 {
 
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private NetworkVariable<float> playerHealth = new NetworkVariable<float>(100f);
     private SpriteRenderer sprite;
 
     private void Start()
