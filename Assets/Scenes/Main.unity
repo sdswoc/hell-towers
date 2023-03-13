@@ -412,7 +412,6 @@ GameObject:
   - component: {fileID: 294436870}
   - component: {fileID: 294436871}
   - component: {fileID: 294436872}
-  - component: {fileID: 294436873}
   m_Layer: 0
   m_Name: Testing
   m_TagString: Map
@@ -465,22 +464,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
   basicTowerPrefab: {fileID: 6316601200132843943, guid: c7e2b8e9f441440f1a569f64f0a04564, type: 3}
---- !u!58 &294436873
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 294436868}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1396,7 +1379,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16a736b90deee40a39e0555471629476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 588162743790287287, guid: f1c888af12a6248fea7e9a328340fc38, type: 3}
+  waves:
+  - enemies:
+    - count: 5
+      rate: 1
+      tag: enemy1
+    - count: 3
+      rate: 2
+      tag: enemy2
+  - enemies:
+    - count: 10
+      rate: 1
+      tag: enemy1
+  time_between_waves: 5
+  pools:
+  - tag: enemy1
+    prefab: {fileID: 588162743790287287, guid: f1c888af12a6248fea7e9a328340fc38, type: 3}
+    size: 10
+    expansion_size: 5
+  - tag: enemy2
+    prefab: {fileID: 6069250941412072646, guid: ce77320985edd420cae9bab571a39416, type: 3}
+    size: 8
+    expansion_size: 5
+  - tag: coin
+    prefab: {fileID: 9196592774849822766, guid: 906013bac125644a18d4be6ea900e551, type: 3}
+    size: 50
+    expansion_size: 20
 --- !u!4 &1517844917
 Transform:
   m_ObjectHideFlags: 0

@@ -2,87 +2,268 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using System.Threading.Tasks;
+using TMPro;
 
-public class WaveSpawnner : NetworkBehaviour
-    //INetworkPrefabInstanceHandler
+
+public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
 {
-    [SerializeField] private List<GameObject> enemy;
-    private NetworkObject SpawnedNetworkEnemy;
-    private GameObject enemyInstance;
+    [SerializeField] GameObject gameOverScreen;
+    [SerializeField] TMP_Text WaveCounter;
 
-    public override void OnNetworkSpawn()
+    #region wave_info
+    [System.Serializable]
+    public class wave
     {
-        if(!IsServer || enemy == null)
-        {
-            return;
-        }
-        InvokeRepeating("Generate", 2f, 2f);
-
-        //NetworkManager.PrefabHandler.AddHandler()
+        public List<enemy> enemies;
     }
 
-    void Generate()
+    [System.Serializable]
+    public class enemy
     {
-        enemyInstance = Instantiate(enemy[0]);
-        enemyInstance.transform.position = transform.position;
-        enemyInstance.transform.rotation = transform.rotation;
-
-        SpawnedNetworkEnemy = enemyInstance.GetComponent<NetworkObject>();
-        SpawnedNetworkEnemy.Spawn();
+        public int count;
+        public float rate;
+        public string tag;
     }
+
+    public List<wave> waves;
+    #endregion
+
+    #region time_setting
+    [SerializeField] float time_between_waves;
+    bool inWave;
+    float time;
+    #endregion
+
+    //keep-track;
+    int wave_count = 0;
+    public Dictionary<string, Queue<GameObject>> poolDictionary;
+    public Dictionary<string, Queue<NetworkObject>> poolDictionaryNetwork;
+
+    GameObject prefab_instance;
+    NetworkObject network_prefab_instance;
+    GameObject object_to_destory;
+
+    //temp-prefab
+
+    #region pooling
+    [System.Serializable]
+    public class pool
+    {
+        public string tag;
+        public GameObject prefab;
+        public int size;
+        public int expansion_size;
+    }
+
+    public List<pool> pools;
+    #endregion
 
     #region Singleton
     public static WaveSpawnner Instance;
     private void Awake()
     {
         Instance = this;
+        gameOverScreen.SetActive(false);
     }
     #endregion
-
-    #region Dictionary-Work
-    [System.Serializable]
-    public class Pool
-    {
-        public string tag;
-        public GameObject prefab;
-        public int size;
-        //public NetworkObject prefabNetwork;
-        public bool canExpand;
-    }
-
-    public List<Pool> pools;
-    public Dictionary<string, Queue<GameObject>> poolDictionaryObject;
-    public Dictionary<string, Queue<NetworkObject>> poolDictionaryNetwork;
 
     private void Start()
     {
-        if (!IsServer)
+        poolDictionary = new Dictionary<string, Queue<GameObject>>();
+        poolDictionaryNetwork = new Dictionary<string, Queue<NetworkObject>>();
+        
+        foreach(pool pool in pools)
         {
+            NetworkManager.PrefabHandler.AddHandler(pool.prefab, this);
+
+            Queue<GameObject> objectPool = new Queue<GameObject>();
+            Queue<NetworkObject> networkObjects = new Queue<NetworkObject>();
+
+            for (int i = 0; i < pool.size; i++)
+            {
+                GameObject obj = Instantiate(pool.prefab);
+                NetworkObject netObj = obj.GetComponent<NetworkObject>();
+                networkObjects.Enqueue(netObj);
+                objectPool.Enqueue(obj);
+                if (IsServer) netObj.Spawn();
+                obj.SetActive(false);
+            }
+
+            poolDictionary.Add(pool.tag, objectPool);
+            poolDictionaryNetwork.Add(pool.tag, networkObjects);
+        }
+
+
+        time = time_between_waves;
+    }
+
+    #region Interface-functions
+    public NetworkObject Instantiate(ulong ownerClientID, Vector3 position, Quaternion rotation)
+    {
+        prefab_instance.SetActive(true);
+        network_prefab_instance = prefab_instance.GetComponent<NetworkObject>();
+        prefab_instance.transform.position = position;
+        prefab_instance.transform.rotation = rotation;
+        return network_prefab_instance;
+    }
+
+    public void Destroy(NetworkObject networkObject)
+    {
+        object_to_destory = networkObject.gameObject;
+        DestroyObjectClientRPC();
+    }
+
+#endregion
+
+   async void spawnWave(int i)
+    {
+        if(i == waves.Count)
+        {
+            expandWaveClientRPC(i);
+        }
+
+        foreach(enemy enemy in waves[i].enemies)
+        {
+            for(int j = 0; j < enemy.count; j++)
+            {
+                spawnObjectFromPool(enemy.tag, transform.position, transform.rotation);
+                int wait = (int)(enemy.rate * 1000);
+                await Task.Delay(wait);
+            }
+        }
+        switchInWaveClientRPC();
+        Debug.Log("Wave-ended-rn!");
+    }
+
+    [ClientRpc]
+    private void expandWaveClientRPC(int i)
+    {
+        List<enemy> new_enemies = waves[i - 1].enemies;
+        for (int h = 0; h < new_enemies.Count; h++)
+        {
+            new_enemies[h].count *= 2;
+        }
+        wave new_wave = new wave();
+        new_wave.enemies = new_enemies;
+        waves.Add(new_wave);
+    }
+
+    public void spawnObjectFromPool(string tag, Vector3 position, Quaternion rotation)
+    {
+        if (!poolDictionary.ContainsKey(tag))
+        {
+            Debug.LogWarning("given tag: " + tag + " doesn't exist");
             return;
         }
 
-
-        poolDictionaryObject = new Dictionary<string, Queue<GameObject>>();
-        poolDictionaryNetwork = new Dictionary<string, Queue<NetworkObject>>();
-
-        foreach(Pool pool in pools)
+        //expanding-the-dictionary
+        if (poolDictionary[tag].Count == 1)
         {
-            Queue<GameObject> objectPool = new Queue<GameObject>();
-            Queue<NetworkObject> networkPool = new Queue<NetworkObject>();
-
-            for( int i = 0; i < pool.size; i++)
+            foreach(pool pool in pools)
             {
-                GameObject obj = Instantiate(pool.prefab);
-                NetworkObject net = obj.GetComponent<NetworkObject>();
-                obj.SetActive(false);
-                objectPool.Enqueue(obj);
-                networkPool.Enqueue(net);
+                if (pool.prefab.GetComponent<IgetObjectType>().isEquals() == tag)
+                {
+                    expandDictionaryClientRPC(pool.tag);
+                    spawnObjectFromPool(tag, position, rotation);
+                    return;
+                }
             }
-            poolDictionaryObject.Add(pool.tag, objectPool);
-            poolDictionaryNetwork.Add(pool.tag, networkPool);
+        }
 
+        //spawnning-the-object
+        SpawnObjectClientRPC(tag, position, rotation);
+
+    }
+
+
+    [ClientRpc]
+    void expandDictionaryClientRPC(string nameing)
+    {
+        foreach(pool pool in pools)
+        {
+            if(pool.tag == nameing)
+            {
+                for (int i = 0; i < pool.expansion_size; i++)
+                {
+                    GameObject obj = Instantiate(pool.prefab);
+                    NetworkObject netObj = obj.GetComponent<NetworkObject>();
+                    poolDictionaryNetwork[pool.tag].Enqueue(netObj);
+                    poolDictionary[pool.tag].Enqueue(obj);
+                    if (IsServer) netObj.Spawn();
+                    obj.SetActive(false);
+                }
+
+            }
         }
     }
-    #endregion
+
+    private void Update()
+    {
+        if (!inWave)
+        {
+            WaveCounter.text = "UPCOMING WAVE : " + (wave_count + 1);
+        }
+        else WaveCounter.text = "";
+
+        if (!IsServer) return;
+
+
+        if (!inWave)
+        {
+            time -= Time.deltaTime;
+            if (time <= 0)
+            {
+                incrementWaveCountClientRPC();
+                switchInWaveClientRPC();
+                spawnWave(wave_count);
+                Debug.Log("wave started!");
+                
+
+            }
+        }
+        else
+        {
+            time = time_between_waves; 
+        }
+    }
+
+
+
+    [ClientRpc]
+    void SpawnObjectClientRPC(string tag, Vector3 position, Quaternion rotation)
+    {
+        prefab_instance = poolDictionary[tag].Dequeue();
+        prefab_instance.SetActive(true);
+        prefab_instance.transform.position = position;
+        prefab_instance.transform.rotation = rotation;
+        network_prefab_instance = poolDictionaryNetwork[tag].Dequeue();
+    }
+    [ClientRpc]
+    void DestroyObjectClientRPC()
+    {
+        foreach (pool pool in pools)
+        {
+            if (pool.prefab.GetComponent<IgetObjectType>().isEquals() == pool.tag)
+            {
+                poolDictionary[pool.tag].Enqueue(object_to_destory);
+                poolDictionaryNetwork[pool.tag].Enqueue(object_to_destory.GetComponent<NetworkObject>());
+                object_to_destory.SetActive(false);
+                return;
+            }
+        }
+    }
+
+    [ClientRpc]
+    void incrementWaveCountClientRPC()
+    {
+        wave_count++;
+    }
+    [ClientRpc]
+    void switchInWaveClientRPC()
+    {
+        inWave = !inWave;
+    }
+
 
 }

@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 10e3ef4c3ea6a453a887b2928f5cf4e6
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Evil Highway
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: b684fdd385e39498eaffd6eeae4eecd7, type: 3}
+  - {fileID: 12800000, guid: 8386eff63035e458c8eac634b5886a41, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

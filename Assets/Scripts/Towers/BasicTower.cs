@@ -16,6 +16,7 @@ public class BasicTower : TowerTemplate,ITowerTemplate
     public void Shoot()
     {
         BulletPooler.spawnFromPool("type1", attackPoint.position, attackPoint.rotation);
+
         temp = timeBetweenShots;   
     }
 

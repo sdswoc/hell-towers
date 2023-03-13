@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 
 
-public class EnemyTemplate : NetworkBehaviour
+public class EnemyTemplate : NetworkBehaviour, IgetObjectType
 {
 
     //enemystats
@@ -14,6 +14,7 @@ public class EnemyTemplate : NetworkBehaviour
     [SerializeField] private float playerDamage;
     [SerializeField] private float armorHealth;
     [SerializeField] private GameObject coin;
+    [SerializeField] private string enemyName;
 
     //change this during playtesting
     private float spread = 1f;
@@ -22,16 +23,24 @@ public class EnemyTemplate : NetworkBehaviour
     //variables for pathfinding
     private Vector3 initialpos = new Vector3();
     private Vector3 nextpos = new Vector3();
-    private Vector3 endPos = new Vector3();
+    private Vector3 endPos = new Vector3(17.5f, 6.5f, 0f);
     private Vector2 randomPos;
 
     //networking variables
     private WaveSpawnner wave;
     private NetworkObject self;
+    private GameManager gameManager;
 
     //just-for-the-looks
     [SerializeField] private SpriteRenderer sprite;
 
+    //interface functions
+    public string isEquals()
+    {
+        return enemyName;
+    }
+
+    
 
     //my functions
     private void checkNextCell()
@@ -42,19 +51,19 @@ public class EnemyTemplate : NetworkBehaviour
         //checking if enemy reached the end
         if (nextpos != endPos)
         {
-            int currentIndexX = Testing.mapGrid.GetCellIndex(nextpos).x;
-            int currentIndexY = Testing.mapGrid.GetCellIndex(nextpos).y;
-            if (Testing.mapGrid.GetValue(currentIndexX, currentIndexY + 1) == 1)
+            int currentIndexX = GameManager.mapGrid.GetCellIndex(nextpos).x;
+            int currentIndexY = GameManager.mapGrid.GetCellIndex(nextpos).y;
+            if (GameManager.mapGrid.GetValue(currentIndexX, currentIndexY + 1) == 1)
             {
-                nextpos = Testing.mapGrid.GetCellCentre(currentIndexX, currentIndexY + 1);
+                nextpos = GameManager.mapGrid.GetCellCentre(currentIndexX, currentIndexY + 1);
             }
-            else if (Testing.mapGrid.GetValue(currentIndexX, currentIndexY - 1) == 1)
+            else if (GameManager.mapGrid.GetValue(currentIndexX, currentIndexY - 1) == 1)
             {
-                nextpos = Testing.mapGrid.GetCellCentre(currentIndexX, currentIndexY + 1);
+                nextpos = GameManager.mapGrid.GetCellCentre(currentIndexX, currentIndexY + 1);
             }
             else
             {
-                nextpos = Testing.mapGrid.GetCellCentre(currentIndexX + 1, currentIndexY);
+                nextpos = GameManager.mapGrid.GetCellCentre(currentIndexX + 1, currentIndexY);
             }
         }
         else reachedEnd();
@@ -92,14 +101,17 @@ public class EnemyTemplate : NetworkBehaviour
 
     private void die()
     {
+        //instantiate-coins-from-coin-pool
         int no_of_coins = killReward / coinValue;
         for(int i = 0; i < no_of_coins; i++)
         {
             randomPos = transform.position + new Vector3(Random.Range(-spread, spread), Random.Range(-spread, spread));
-            Instantiate(coin, randomPos, Quaternion.identity);
+            wave.spawnObjectFromPool("coin", randomPos, Quaternion.identity);
         }
+        //destory-(pool)
         self = gameObject.GetComponent<NetworkObject>();
-        self.Despawn();
+        wave.Destroy(self);
+        
     }
 
     public void takeDamage(float damage, bool canArmored)
@@ -116,47 +128,49 @@ public class EnemyTemplate : NetworkBehaviour
 
     private void reachedEnd()
     {
-        //do something with player damage
-        die();
+        GameManager.playerHealth.Value -= (int)playerDamage;
+        self = gameObject.GetComponent<NetworkObject>();
+        wave.Destroy(self);
     }
 
     private void findStartPos()
     {
-        for(int y = 0; y < 20; y++)
+        for (int y = 0; y < 20; y++)
         {
-            if(Testing.mapGrid.GetValue(0,y) == 1)
+            if (GameManager.mapGrid.GetValue(0, y) == 1)
             {
-                initialpos = Testing.mapGrid.GetCellCentre(0, y);
-                nextpos = Testing.mapGrid.GetCellCentre(1, y);
+                initialpos = GameManager.mapGrid.GetCellCentre(0, y);
+                nextpos = GameManager.mapGrid.GetCellCentre(1, y);
                 break; //change this if you want multiple starting points
             }
         }
-        
-    }
-    private void findEndPos()
-    {
-        int x = 33;
-        for(int y = 0; y < 20; y++)
-        {
-            if (Testing.mapGrid.GetValue(x, y) == 1) {
-                endPos = Testing.mapGrid.GetCellCentre(x, y);
-                Debug.Log("endpos is :" + endPos);
-            }
-        }
-    }
+     }
+        //private void findEndPos()
+        //{
+        //    int x = 33;
+        //    for(int y = 0; y < 20; y++)
+        //    {
+        //        if (GameManager.mapGrid.GetValue(x, y) == 1) {
+        //            endPos = GameManager.mapGrid.GetCellCentre(x, y);
+        //            Debug.Log("endpos is :" + endPos);
+        //        }
+        //    }
+        //}
 
 
 
-    //in-built functions
+        //in-built functions
     private void Awake()
     {
         findStartPos();
-        findEndPos();
-        Debug.Log(transform.position);
+        //findEndPos();
         transform.position.Set(initialpos.x, initialpos.y, 0);
-        Debug.Log(transform.position);
     }
 
+    private void Start()
+    {
+        wave = WaveSpawnner.Instance;
+    }
 
     private void Update()
     {
@@ -171,6 +185,10 @@ public class EnemyTemplate : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.K)) die();
         
     }
+}
+
+public interface IgetObjectType{
+    string isEquals();
 }
 
 

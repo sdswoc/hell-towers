@@ -5,6 +5,14 @@ using UnityEngine;
 public class BulletMove : MonoBehaviour
 {
     [SerializeField] private float movementSpeed;
+    [SerializeField] private string nameTag;
+
+    OfflineObjectPooler pooler;
+
+    private void Awake()
+    {
+        pooler = OfflineObjectPooler.Instance;
+    }
 
     private void Update()
     {
@@ -15,8 +23,25 @@ public class BulletMove : MonoBehaviour
     {
         if (collision.CompareTag("Tower"))
         {
-            OfflineObjectPooler.Instance.destroyFromPool("type1", gameObject);
+            pooler.destroyFromPool(nameTag, gameObject);
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        GameObject obj = collision.gameObject;
+        if (obj.CompareTag("ThePlayer"))
+        {
+            //givedamagetotheplayer
+            pooler.destroyFromPool(nameTag, gameObject);
+        }
+        else if (obj.CompareTag("Enemy")){
+            //give-damage-to-the-enemy
+            pooler.destroyFromPool(nameTag, gameObject);
+        }
+        else if (obj.CompareTag("Map"))
+        {
+            pooler.destroyFromPool(nameTag, gameObject);
+        }
+    }
 }

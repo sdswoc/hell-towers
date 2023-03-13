@@ -10,6 +10,9 @@ public class PlayerMove : NetworkBehaviour
     [SerializeField] private NetworkVariable<float> playerHealth = new NetworkVariable<float>(100f);
     private SpriteRenderer sprite;
 
+    Vector3 moveDir = new Vector3();
+    private bool inBoundary;
+
     private void Start()
     {
         Debug.Log("Player Created!");
@@ -24,8 +27,13 @@ public class PlayerMove : NetworkBehaviour
 
     private void Update()
     {
+        if (inBoundary)
+        {
+            return;
+        }
+
         if (IsOwner) {
-            Vector3 moveDir = new Vector3();
+
             Vector3 rotation = new Vector3();
 
             moveDir.x = Input.GetAxisRaw("Horizontal");
@@ -59,5 +67,15 @@ public class PlayerMove : NetworkBehaviour
 
             transform.position += moveDir * moveSpeed * Time.fixedDeltaTime;
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Map")) inBoundary = true;
+        Debug.Log("Boundary Entered");
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Map")) inBoundary = false;
     }
 }

@@ -69,9 +69,8 @@ public class OfflineObjectPooler : MonoBehaviour
                         GameObject obj1 = Instantiate(pool.prefab);
                         obj1.SetActive(false);
                         poolDictionary[tag].Enqueue(obj1);
-                        break;
                     }
-
+                    break;
                 }
             }
 
@@ -88,7 +87,9 @@ public class OfflineObjectPooler : MonoBehaviour
         obj.transform.position = position;
         obj.transform.rotation = rotation;
 
-        IOfflinePooledObject offlinePooledObject = obj.GetComponent<IOfflinePooledObject>();
+        //IOfflinePooledObject offlinePooledObject = obj.GetComponent<IOfflinePooledObject>();
+
+        //if (poolDictionary != null) offlinePooledObject.SetDamage(damage);
 
         return obj;
     }

@@ -106,6 +106,7 @@ MonoBehaviour:
   playerDamage: 2
   armorHealth: 0
   coin: {fileID: 9196592774849822766, guid: 906013bac125644a18d4be6ea900e551, type: 3}
+  enemyName: enemy2
   sprite: {fileID: 6069250941412072505}
 --- !u!114 &6069250941412072507
 MonoBehaviour:

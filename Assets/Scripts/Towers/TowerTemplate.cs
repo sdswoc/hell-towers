@@ -17,15 +17,6 @@ public class TowerTemplate : NetworkBehaviour
     [SerializeField] protected float timeBetweenShots;
     [SerializeField] protected float damage;
     [SerializeField] protected float towerCost;
-
-    #region particles-based-shooting-variables
-    //variablesfortheshooting
-    //protected ParticleSystem system;
-    //[SerializeField] private Material bulletMaterial;
-    //[SerializeField] private Sprite bulletSprite;
-    //[SerializeField] private LayerMask layer;
-    #endregion
-
     [SerializeField] protected GameObject bulletPrefab;
     [SerializeField] protected Transform attackPoint;
 
@@ -93,31 +84,6 @@ public class TowerTemplate : NetworkBehaviour
             Debug.Log("Player Removed!");
         }
     }
-
-    #region particle-based-shooting
-    //my functions
-    //protected void Summon(float speed, float lifetime, float no_of_cols, float spread)
-    //{
-    //    float angle = 360 / no_of_cols;
-    //    for(int i = 0; i < no_of_cols; i++)
-    //    {
-    //        Material particleMaterial = bulletMaterial;
-    //        var go = new GameObject("Particle System");
-    //        go.transform.Rotate(angle * i, 90, 0); //rotate so the system emits upwards
-    //        //recheck this part of the code
-    //        go.transform.parent = this.transform;
-    //        go.transform.position = this.transform.position;
-    //        system = go.AddComponent<ParticleSystem>();
-    //        go.GetComponent<ParticleSystemRenderer>().material = particleMaterial;
-    //        var mainModule = system.main;
-    //        mainModule.startSize = 0.5f; //size of all bullets can be collectively changed from here
-    //        mainModule.startSpeed = speed;
-    //        mainModule.maxParticles = 100000;
-    //        mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
-
-    //    }
-    //}
-    #endregion
 }
 
 public interface ITowerTemplate
