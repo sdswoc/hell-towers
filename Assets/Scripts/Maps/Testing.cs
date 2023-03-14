@@ -18,7 +18,6 @@ public class Testing : NetworkBehaviour
     {
         mapGrid = new Grid<int> (34, 20, 1f, new Vector3(-17f, -10f));
         generateMap(mapGrid);
-        Debug.Log(mapGrid.GetCellCentre(0,0));
     }
 
     //private void Update()

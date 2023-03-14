@@ -27,16 +27,17 @@ public class BulletMove : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         GameObject obj = collision.gameObject;
         if (obj.CompareTag("ThePlayer"))
         {
-            //givedamagetotheplayer
+            Debug.Log("PlayerHit!!");
             pooler.destroyFromPool(nameTag, gameObject);
         }
-        else if (obj.CompareTag("Enemy")){
-            //give-damage-to-the-enemy
+        else if (obj.CompareTag("Enemy"))
+        {
+            Debug.Log("EnemyHit!");
             pooler.destroyFromPool(nameTag, gameObject);
         }
         else if (obj.CompareTag("Map"))

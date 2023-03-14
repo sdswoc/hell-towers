@@ -5,7 +5,8 @@ using UnityEngine;
 public class BasicTower : TowerTemplate,ITowerTemplate
 {
     private GameObject nearestEnemy;
-
+    float angle;
+    [SerializeField] float offset;
 
     //in-script variables
     private bool canShoot = true;
@@ -15,8 +16,10 @@ public class BasicTower : TowerTemplate,ITowerTemplate
     //Interface-functions
     public void Shoot()
     {
+        angle += offset;
+        Vector3 newRotation = new Vector3(0, 0, angle);
+        transform.localRotation = Quaternion.Euler(newRotation);
         BulletPooler.spawnFromPool("type1", attackPoint.position, attackPoint.rotation);
-
         temp = timeBetweenShots;   
     }
 
@@ -25,7 +28,7 @@ public class BasicTower : TowerTemplate,ITowerTemplate
         if (nearestEnemy != null)
         {
             Vector2 relative = nearestEnemy.transform.position - transform.position;
-            float angle = Mathf.Atan2(relative.y, relative.x) * Mathf.Rad2Deg;
+            angle = Mathf.Atan2(relative.y, relative.x) * Mathf.Rad2Deg;
             Vector3 newRotation = new Vector3(0, 0, angle);
             transform.localRotation = Quaternion.Euler(newRotation);
         }
@@ -61,7 +64,6 @@ public class BasicTower : TowerTemplate,ITowerTemplate
         }
         else if (enemies.Count != 0 && canShoot)
         {
-            Debug.Log(enemies);
             canShoot = false;
             Shoot();
         }

@@ -244,6 +244,7 @@ GameObject:
   - component: {fileID: 453795582237635347}
   - component: {fileID: 453795582237635340}
   - component: {fileID: 6826561492604255722}
+  - component: {fileID: 5052732156017081835}
   m_Layer: 0
   m_Name: PlayerTower
   m_TagString: Untagged
@@ -287,8 +288,10 @@ MonoBehaviour:
   timeBetweenShots: 0.2
   damage: 15
   towerCost: 10
-  bulletPrefab: {fileID: 1531232590274734583, guid: e5f7795ac55034b4ead2e48c93bb07f1, type: 3}
+  bulletPrefab: {fileID: 1531232590274734583, guid: 9425de44dd0fc412e98cc35284649273, type: 3}
   attackPoint: {fileID: 453795581660577770}
+  netobj: {fileID: 0}
+  offset: 0
 --- !u!58 &453795582237635340
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -321,3 +324,29 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!61 &5052732156017081835
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 453795582237635341}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0

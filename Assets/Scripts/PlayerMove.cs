@@ -11,34 +11,26 @@ public class PlayerMove : NetworkBehaviour
     private SpriteRenderer sprite;
 
     Vector3 moveDir = new Vector3();
-    private bool inBoundary;
+    [SerializeField]private Rigidbody2D rb;
 
     private void Start()
     {
-        Debug.Log("Player Created!");
         sprite = GetComponent<SpriteRenderer>();
     }
 
     public override void OnNetworkSpawn()
     {
-        Debug.Log("Player created on server!");
         base.OnNetworkSpawn();
     }
 
     private void Update()
     {
-        if (inBoundary)
-        {
-            return;
-        }
-
         if (IsOwner) {
 
             Vector3 rotation = new Vector3();
 
             moveDir.x = Input.GetAxisRaw("Horizontal");
             moveDir.y = Input.GetAxisRaw("Vertical");
-
 
             //for-the-looks
             if ((moveDir.x + moveDir.y) < 0 && moveDir.y < 0) sprite.flipX = true;
@@ -65,17 +57,11 @@ public class PlayerMove : NetworkBehaviour
             }
 
 
-            transform.position += moveDir * moveSpeed * Time.fixedDeltaTime;
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void FixedUpdate()
     {
-        if (collision.CompareTag("Map")) inBoundary = true;
-        Debug.Log("Boundary Entered");
-    }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Map")) inBoundary = false;
+        rb.velocity = moveDir * moveSpeed * Time.fixedDeltaTime;
     }
 }

@@ -186,11 +186,17 @@ public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
             {
                 for (int i = 0; i < pool.expansion_size; i++)
                 {
-                    GameObject obj = Instantiate(pool.prefab);
+                    GameObject obj = pool.prefab;
                     NetworkObject netObj = obj.GetComponent<NetworkObject>();
+                    if (IsServer)
+                    {
+                        obj = Instantiate(pool.prefab);
+                        netObj.Spawn();
+                    }
+
                     poolDictionaryNetwork[pool.tag].Enqueue(netObj);
                     poolDictionary[pool.tag].Enqueue(obj);
-                    if (IsServer) netObj.Spawn();
+
                     obj.SetActive(false);
                 }
 
@@ -233,6 +239,7 @@ public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
     [ClientRpc]
     void SpawnObjectClientRPC(string tag, Vector3 position, Quaternion rotation)
     {
+        Debug.Log("Length before dequeue: " + poolDictionary[tag].Count);
         prefab_instance = poolDictionary[tag].Dequeue();
         prefab_instance.SetActive(true);
         prefab_instance.transform.position = position;
@@ -247,6 +254,7 @@ public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
             if (pool.prefab.GetComponent<IgetObjectType>().isEquals() == pool.tag)
             {
                 poolDictionary[pool.tag].Enqueue(object_to_destory);
+                Debug.Log("Length after enqueue: " + poolDictionary[tag].Count);
                 poolDictionaryNetwork[pool.tag].Enqueue(object_to_destory.GetComponent<NetworkObject>());
                 object_to_destory.SetActive(false);
                 return;

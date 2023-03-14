@@ -55,8 +55,8 @@ public class TowerTemplate : NetworkBehaviour
     {
         BulletPooler = OfflineObjectPooler.Instance;
 
-        transform.position = Testing.mapGrid.GetCellCentre(transform.position);
-        netobj.transform.position = transform.position;
+        netobj.transform.position = GameManager.mapGrid.GetCellCentre(transform.position);
+        //netobj.transform.position = transform.position;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -64,11 +64,9 @@ public class TowerTemplate : NetworkBehaviour
         if (collision.CompareTag("Enemy"))
         {
             enemies.Add(collision.gameObject);
-            Debug.Log("Enemy Added!");
         }else if (collision.CompareTag("ThePlayer"))
         {
             players.Add(collision.gameObject);
-            Debug.Log("Players Added!");
         }
     }
 
@@ -77,11 +75,9 @@ public class TowerTemplate : NetworkBehaviour
         if (collision.CompareTag("Enemy"))
         {
             enemies.Remove(collision.gameObject);
-            Debug.Log("Enemey Removed!");
         }else if (collision.CompareTag("ThePlayer"))
         {
             enemies.Remove(collision.gameObject);
-            Debug.Log("Player Removed!");
         }
     }
 }

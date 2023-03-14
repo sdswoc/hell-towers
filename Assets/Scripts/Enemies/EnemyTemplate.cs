@@ -40,8 +40,6 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
         return enemyName;
     }
 
-    
-
     //my functions
     private void checkNextCell()
     {
