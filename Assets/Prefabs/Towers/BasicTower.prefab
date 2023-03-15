@@ -114,7 +114,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6316601200132843943}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 6.5, y: 3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -145,7 +145,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 1531232590274734583, guid: e5f7795ac55034b4ead2e48c93bb07f1, type: 3}
   attackPoint: {fileID: 6316601200530401374}
   netobj: {fileID: -8579415337265050929}
-  offset: 12
+  offset: 0
 --- !u!58 &6316601200132843946
 CircleCollider2D:
   m_ObjectHideFlags: 0

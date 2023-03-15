@@ -158,10 +158,9 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
 
 
         //in-built functions
-    private void Awake()
+    private void OnEnable()
     {
         findStartPos();
-        //findEndPos();
         transform.position.Set(initialpos.x, initialpos.y, 0);
     }
 

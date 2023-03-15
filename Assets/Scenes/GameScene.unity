@@ -2202,6 +2202,7 @@ GameObject:
   - component: {fileID: 1061225580}
   - component: {fileID: 1061225582}
   - component: {fileID: 1061225581}
+  - component: {fileID: 1061225583}
   m_Layer: 5
   m_Name: CurrencyPanel
   m_TagString: Untagged
@@ -2269,6 +2270,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061225579}
   m_CullTransparentMesh: 1
+--- !u!114 &1061225583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061225579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2348760113
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1098500945
 GameObject:
   m_ObjectHideFlags: 0
@@ -10751,7 +10768,7 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
-    TickRate: 30
+    TickRate: 60
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
     ConnectionData: 
@@ -11101,6 +11118,7 @@ GameObject:
   - component: {fileID: 2060892496}
   - component: {fileID: 2060892498}
   - component: {fileID: 2060892497}
+  - component: {fileID: 2060892499}
   m_Layer: 5
   m_Name: PlayerHealthPanel
   m_TagString: Untagged
@@ -11168,6 +11186,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2060892495}
   m_CullTransparentMesh: 1
+--- !u!114 &2060892499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060892495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1081034480
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &2073350768
 GameObject:
   m_ObjectHideFlags: 0

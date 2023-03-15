@@ -5,6 +5,8 @@ using Unity.Netcode;
 using System.Threading.Tasks;
 using TMPro;
 
+using UnityEditor;
+
 
 public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
 {
@@ -133,7 +135,6 @@ public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
             }
         }
         switchInWaveClientRPC();
-        Debug.Log("Wave-ended-rn!");
     }
 
     [ClientRpc]
@@ -151,52 +152,23 @@ public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
 
     public void spawnObjectFromPool(string tag, Vector3 position, Quaternion rotation)
     {
-        if (!poolDictionary.ContainsKey(tag))
-        {
-            Debug.LogWarning("given tag: " + tag + " doesn't exist");
-            return;
-        }
-
-        //expanding-the-dictionary
-        if (poolDictionary[tag].Count == 1)
-        {
-            foreach(pool pool in pools)
-            {
-                if (pool.prefab.GetComponent<IgetObjectType>().isEquals() == tag)
-                {
-                    expandDictionaryClientRPC(pool.tag);
-                    spawnObjectFromPool(tag, position, rotation);
-                    return;
-                }
-            }
-        }
-
-        //spawnning-the-object
         SpawnObjectClientRPC(tag, position, rotation);
-
     }
 
 
-    [ClientRpc]
-    void expandDictionaryClientRPC(string nameing)
+    void expandDictionary(string nameing)
     {
         foreach(pool pool in pools)
         {
-            if(pool.tag == nameing)
+            if (pool.tag == nameing)
             {
                 for (int i = 0; i < pool.expansion_size; i++)
                 {
-                    GameObject obj = pool.prefab;
+                    GameObject obj = obj = Instantiate(pool.prefab);
                     NetworkObject netObj = obj.GetComponent<NetworkObject>();
-                    if (IsServer)
-                    {
-                        obj = Instantiate(pool.prefab);
-                        netObj.Spawn();
-                    }
-
+                    if (IsServer) netObj.Spawn();
                     poolDictionaryNetwork[pool.tag].Enqueue(netObj);
                     poolDictionary[pool.tag].Enqueue(obj);
-
                     obj.SetActive(false);
                 }
 
@@ -223,7 +195,6 @@ public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
                 incrementWaveCountClientRPC();
                 switchInWaveClientRPC();
                 spawnWave(wave_count);
-                Debug.Log("wave started!");
                 
 
             }
@@ -239,12 +210,33 @@ public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
     [ClientRpc]
     void SpawnObjectClientRPC(string tag, Vector3 position, Quaternion rotation)
     {
-        Debug.Log("Length before dequeue: " + poolDictionary[tag].Count);
+        if (!poolDictionary.ContainsKey(tag))
+        {
+            Debug.LogWarning("given tag: " + tag + " doesn't exist");
+            return;
+        }
+
+        //expanding-the-dictionary
+        if (poolDictionary[tag].Count == 1)
+        {
+            foreach (pool pool in pools)
+            {
+                if (pool.prefab.GetComponent<IgetObjectType>().isEquals() == tag)
+                {
+                    expandDictionary(pool.tag);
+                    break;
+                    //spawnObjectFromPool(tag, position, rotation);
+                    //return;
+                }
+            }
+        }
+
         prefab_instance = poolDictionary[tag].Dequeue();
         prefab_instance.SetActive(true);
-        prefab_instance.transform.position = position;
+        prefab_instance.transform.position = transform.position;
         prefab_instance.transform.rotation = rotation;
         network_prefab_instance = poolDictionaryNetwork[tag].Dequeue();
+
     }
     [ClientRpc]
     void DestroyObjectClientRPC()
@@ -254,7 +246,7 @@ public class WaveSpawnner : NetworkBehaviour, INetworkPrefabInstanceHandler
             if (pool.prefab.GetComponent<IgetObjectType>().isEquals() == pool.tag)
             {
                 poolDictionary[pool.tag].Enqueue(object_to_destory);
-                Debug.Log("Length after enqueue: " + poolDictionary[tag].Count);
+                Debug.Log("Length after enqueue: " + poolDictionary[pool.tag].Count);
                 poolDictionaryNetwork[pool.tag].Enqueue(object_to_destory.GetComponent<NetworkObject>());
                 object_to_destory.SetActive(false);
                 return;

@@ -75,18 +75,17 @@ public class GameManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsServer) return;
 
         playerHealth.OnValueChanged += (int oldval, int newval) =>
         {
-            //currencyTxt.text = newval.ToString();
-            changePlayerHealthValueClientRPC(newval);
+            changePlayerHealthValue(newval);
         };
         currency.OnValueChanged += (int oldval, int newval) =>
         {
-            //playerHealthTxt.text = newval.ToString();
-            changeCurrencyValueClientRPC(newval);
+            changeCurrencyValue(newval);
         };
+
+
         currency.Value = 10;
         playerHealth.Value = 10;
 
@@ -95,17 +94,17 @@ public class GameManager : NetworkBehaviour
     }
 
 
-    [ClientRpc]
-    void changeCurrencyValueClientRPC(int newval)
+
+    void changeCurrencyValue(int newval)
     {
-        if(!IsServer) currency.Value = newval;
         currencyTxt.text = newval.ToString();
+        Debug.Log(newval);
     }
-    [ClientRpc]
-    void changePlayerHealthValueClientRPC(int newval)
+
+    void changePlayerHealthValue(int newval)
     {
-        if(!IsServer)playerHealth.Value = newval;
         playerHealthTxt.text = newval.ToString();
+        Debug.Log(newval  + "is the new value of health");
     }
     #endregion
 
@@ -140,71 +139,56 @@ public class GameManager : NetworkBehaviour
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower1prefab;
-                    if (IsServer)
-                    {
-                        
-                        changeGridValueClientRPC(cell, 2);
-                        SpawnTower();
-                    }
-                    else
-                    {
-                        changeGridValueServerRpc(cell, 2);
-                        SpawnTowerServerRPC();
-                    }
+                    changeGridValueClientRPC(cell, 2);
+                    if (!IsServer) SpawnTowerServerRPC();
+                    else SpawnTowerClientRPC();
                     tower1 = false;
                 }
                 else if (tower2)
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower2prefab;
-                    if (IsServer)
-                    {
-
-                        changeGridValueClientRPC(cell, 2);
-                        SpawnTower();
-                    }
-                    else
-                    {
-                        changeGridValueServerRpc(cell, 2);
-                        SpawnTowerServerRPC();
-                    }
+                    changeGridValueClientRPC(cell, 2);
+                    if (!IsServer) SpawnTowerServerRPC();
+                    else SpawnTowerClientRPC();
                     tower2 = false;
                 }
                 else if (tower3)
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower3prefab;
-                    if (IsServer)
-                    {
-
-                        changeGridValueClientRPC(cell, 2);
-                        SpawnTower();
-                    }
-                    else
-                    {
-                        changeGridValueServerRpc(cell, 2);
-                        SpawnTowerServerRPC();
-                    }
+                    changeGridValueClientRPC(cell, 2);
+                    if (!IsServer) SpawnTowerServerRPC();
+                    else SpawnTowerClientRPC();
                     tower3 = false;
                 }
                 else if (tower4)
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower4prefab;
-                    if (IsServer)
-                    {
-
-                        changeGridValueClientRPC(cell, 2);
-                        SpawnTower();
-                    }
-                    else
-                    {
-                        changeGridValueServerRpc(cell, 2);
-                        SpawnTowerServerRPC();
-                    }
+                    changeGridValueClientRPC(cell, 2);
+                    if (!IsServer) SpawnTowerServerRPC();
+                    else SpawnTowerClientRPC();
                     tower4 = false;
                 }
             }
+        }
+    }
+    [ServerRpc]
+    void SpawnTowerServerRPC()
+    {
+        SpawnTowerClientRPC();
+    }
+
+    [ClientRpc]
+    void SpawnTowerClientRPC()
+    {
+
+        tower_to_spawn.transform.position = mapGrid.GetCellCentre(mousePos);
+        if (IsServer)
+        {
+            Instantiate(tower_to_spawn);
+            tower_to_spawn.GetComponent<NetworkObject>().Spawn();
         }
     }
 
@@ -223,18 +207,6 @@ public class GameManager : NetworkBehaviour
     public void spawnTower4()
     {
         tower4 = true;
-    }
-
-    [ServerRpc]
-    void SpawnTowerServerRPC()
-    {
-        SpawnTower();
-    }
-
-    void SpawnTower()
-    {
-        tower_to_spawn.transform.position = mapGrid.GetCellCentre(mousePos);
-        tower_to_spawn.GetComponent<NetworkObject>().Spawn();
     }
     #endregion
 }
