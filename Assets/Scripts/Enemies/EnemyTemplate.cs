@@ -14,7 +14,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     [SerializeField] private float playerDamage;
     [SerializeField] private float armorHealth;
     [SerializeField] private GameObject coin;
-    [SerializeField] private string enemyName;
+    [SerializeField] public string enemyName;
 
     //change this during playtesting
     private float spread = 1f;
@@ -99,16 +99,17 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
 
     private void die()
     {
-        //instantiate-coins-from-coin-pool
         int no_of_coins = killReward / coinValue;
         for(int i = 0; i < no_of_coins; i++)
         {
             randomPos = transform.position + new Vector3(Random.Range(-spread, spread), Random.Range(-spread, spread));
-            wave.spawnObjectFromPool("coin", randomPos, Quaternion.identity);
+            GameObject obj = Instantiate(coin);
+            obj.GetComponent<NetworkObject>().Spawn();
+            obj.transform.position = randomPos;
+            obj.transform.rotation = Quaternion.identity;
         }
-        //destory-(pool)
         self = gameObject.GetComponent<NetworkObject>();
-        wave.Destroy(self);
+        wave.removeEnemy(gameObject);
         
     }
 
@@ -127,8 +128,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     private void reachedEnd()
     {
         GameManager.playerHealth.Value -= (int)playerDamage;
-        self = gameObject.GetComponent<NetworkObject>();
-        wave.Destroy(self);
+        wave.removeEnemy(gameObject);
     }
 
     private void findStartPos()

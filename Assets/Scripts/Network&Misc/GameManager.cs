@@ -9,21 +9,20 @@ public class GameManager : NetworkBehaviour
 {
     public static Grid<int> mapGrid;
 
+    #region singleton
     public static GameManager gameManager;
 
     private void Awake()
     {
         gameManager = this;       
     }
+    #endregion
 
     private void Start()
     {
         mapGrid = new Grid<int>(34, 20, 1f, new Vector3(-18, -10));
         generateMap(mapGrid);
-
-
     }
-
 
     //functions to edit the grid
     [ServerRpc]
@@ -66,6 +65,7 @@ public class GameManager : NetworkBehaviour
     }
     #endregion
 
+    //this-needs-to-be-fixed
     #region stats
     public TMP_Text currencyTxt;
     public TMP_Text playerHealthTxt;
@@ -133,14 +133,14 @@ public class GameManager : NetworkBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-            if (mapGrid.GetValue(mousePos) == 0 )
+            if (mapGrid.GetValue(mousePos) == 0)
             {
                 if (tower1)
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower1prefab;
                     changeGridValueClientRPC(cell, 2);
-                    if (!IsServer) SpawnTowerServerRPC();
+                    if (!IsServer) SpawnTowerServerRPC(1, mousePos);
                     else SpawnTowerClientRPC();
                     tower1 = false;
                 }
@@ -149,7 +149,7 @@ public class GameManager : NetworkBehaviour
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower2prefab;
                     changeGridValueClientRPC(cell, 2);
-                    if (!IsServer) SpawnTowerServerRPC();
+                    if (!IsServer) SpawnTowerServerRPC(2, mousePos);
                     else SpawnTowerClientRPC();
                     tower2 = false;
                 }
@@ -158,32 +158,56 @@ public class GameManager : NetworkBehaviour
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower3prefab;
                     changeGridValueClientRPC(cell, 2);
-                    if (!IsServer) SpawnTowerServerRPC();
+                    if (!IsServer)
+                    {
+                        Debug.Log("Ye client hai bruh");
+                        SpawnTowerServerRPC(3, mousePos);
+                    }
                     else SpawnTowerClientRPC();
                     tower3 = false;
                 }
+     
                 else if (tower4)
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower4prefab;
                     changeGridValueClientRPC(cell, 2);
-                    if (!IsServer) SpawnTowerServerRPC();
+                    if (!IsServer) SpawnTowerServerRPC(4, mousePos);
                     else SpawnTowerClientRPC();
                     tower4 = false;
                 }
             }
         }
     }
-    [ServerRpc]
-    void SpawnTowerServerRPC()
+
+    [ServerRpc(RequireOwnership = false)]
+    void SpawnTowerServerRPC(int i, Vector3 clickedPos)
     {
-        SpawnTowerClientRPC();
+        if (i == 1)
+        {
+            tower_to_spawn = tower1prefab;
+        }
+        else if (i == 2)
+        {
+            tower_to_spawn = tower2prefab;
+        }
+        else if (i == 3)
+        {
+            tower_to_spawn = tower3prefab;
+        }
+        else if (i == 4)
+        {
+            tower_to_spawn = tower4prefab;
+        }
+        else tower_to_spawn = null;
+        Instantiate(tower_to_spawn);
+        tower_to_spawn.GetComponent<NetworkObject>().Spawn();
+        tower_to_spawn.transform.position = mapGrid.GetCellCentre(clickedPos);
     }
 
     [ClientRpc]
     void SpawnTowerClientRPC()
     {
-
         tower_to_spawn.transform.position = mapGrid.GetCellCentre(mousePos);
         if (IsServer)
         {
@@ -209,4 +233,5 @@ public class GameManager : NetworkBehaviour
         tower4 = true;
     }
     #endregion
+
 }

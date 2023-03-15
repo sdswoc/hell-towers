@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class CoinPickup : NetworkBehaviour, IgetObjectType
+public class CoinPickup : NetworkBehaviour
 {
     private bool collected = false;
     private Transform playerPos;
     private float t = 0f;
     [SerializeField] private float collectSpeed;
     WaveSpawnner wave;
-    public string nameTag = "coin";
     float time;
     [SerializeField] float max_time = 4f;
 
@@ -43,19 +42,20 @@ public class CoinPickup : NetworkBehaviour, IgetObjectType
         if(t >= 0.9f)
         {
             //increase the currency here!!
-            wave.Destroy(gameObject.GetComponent<NetworkObject>());
+            Delete();
         }
 
         time += Time.deltaTime;
 
         if(time > max_time)
         {
-            wave.Destroy(gameObject.GetComponent<NetworkObject>());
+            Delete();
         }
     }
 
-    public string isEquals()
+    private void Delete()
     {
-        return nameTag;
+        gameObject.GetComponent<NetworkObject>().Despawn();
+        
     }
 }

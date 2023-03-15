@@ -2646,36 +2646,14 @@ MonoBehaviour:
     - count: 10
       rate: 1
       tag: enemy1armor
+  prefabs_here:
+  - {fileID: 588162743790287287, guid: f1c888af12a6248fea7e9a328340fc38, type: 3}
+  - {fileID: 6481087944739790391, guid: 79b548c6d201945138675111c7ec61a4, type: 3}
+  - {fileID: 6069250941412072646, guid: ce77320985edd420cae9bab571a39416, type: 3}
+  - {fileID: 5459391418594321713, guid: 833c1546c3f724cc6af87b7789a3eec7, type: 3}
+  - {fileID: 666528028141545331, guid: de82d6340011e4f47b6210457d5e2f07, type: 3}
+  - {fileID: 7880607655294813326, guid: 508fc618227db4c4ca520a2025bd52cc, type: 3}
   time_between_waves: 15
-  pools:
-  - tag: coin
-    prefab: {fileID: 9196592774849822766, guid: 906013bac125644a18d4be6ea900e551, type: 3}
-    size: 40
-    expansion_size: 20
-  - tag: enemy1
-    prefab: {fileID: 588162743790287287, guid: f1c888af12a6248fea7e9a328340fc38, type: 3}
-    size: 11
-    expansion_size: 10
-  - tag: enemy2
-    prefab: {fileID: 6069250941412072646, guid: ce77320985edd420cae9bab571a39416, type: 3}
-    size: 8
-    expansion_size: 4
-  - tag: enemy3
-    prefab: {fileID: 666528028141545331, guid: de82d6340011e4f47b6210457d5e2f07, type: 3}
-    size: 1
-    expansion_size: 4
-  - tag: enemy1armor
-    prefab: {fileID: 6481087944739790391, guid: 79b548c6d201945138675111c7ec61a4, type: 3}
-    size: 1
-    expansion_size: 10
-  - tag: enemy2armor
-    prefab: {fileID: 5459391418594321713, guid: 833c1546c3f724cc6af87b7789a3eec7, type: 3}
-    size: 1
-    expansion_size: 8
-  - tag: enemy3armor
-    prefab: {fileID: 7880607655294813326, guid: 508fc618227db4c4ca520a2025bd52cc, type: 3}
-    size: 1
-    expansion_size: 4
 --- !u!4 &1106449558
 Transform:
   m_ObjectHideFlags: 0
@@ -10768,7 +10746,37 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
-    TickRate: 60
+    - Override: 0
+      Prefab: {fileID: 588162743790287287, guid: f1c888af12a6248fea7e9a328340fc38, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 6481087944739790391, guid: 79b548c6d201945138675111c7ec61a4, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 6069250941412072646, guid: ce77320985edd420cae9bab571a39416, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 5459391418594321713, guid: 833c1546c3f724cc6af87b7789a3eec7, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 666528028141545331, guid: de82d6340011e4f47b6210457d5e2f07, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 7880607655294813326, guid: 508fc618227db4c4ca520a2025bd52cc, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
     ConnectionData: 
