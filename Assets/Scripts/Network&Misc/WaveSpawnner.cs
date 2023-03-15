@@ -154,7 +154,6 @@ public class WaveSpawnner : NetworkBehaviour
         prefab_instance.transform.position = position;
         prefab_instance.transform.rotation = rotation;
         queue_enemies_spawned.Enqueue(prefab_instance);
-        Debug.Log("reached to this part!");
         network_prefab_instance.Spawn();
 
     }

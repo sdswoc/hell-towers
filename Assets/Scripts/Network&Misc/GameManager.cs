@@ -25,7 +25,7 @@ public class GameManager : NetworkBehaviour
     }
 
     //functions to edit the grid
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void changeGridValueServerRpc(Vector2 cell, int value)
     {
         mapGrid.SetValue(cell, value);
@@ -70,38 +70,75 @@ public class GameManager : NetworkBehaviour
     public TMP_Text currencyTxt;
     public TMP_Text playerHealthTxt;
 
-    public static NetworkVariable<int> currency = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public static NetworkVariable<int> playerHealth = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public static NetworkVariable<int> currency = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    public static NetworkVariable<int> playerHealth = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public override void OnNetworkSpawn()
     {
+        playerHealth.OnValueChanged += changePlayerHealthValue;
+        currency.OnValueChanged += changeCurrencyValue;
 
-        playerHealth.OnValueChanged += (int oldval, int newval) =>
+    }
+
+    [ClientRpc]
+    public void decreasePlayerHealthClientRPC(int val)
+    {
+        decreaseHealth(val);
+    }
+
+    public void decreaseHealth(int health)
+    {
+        if (IsOwner) playerHealth.Value -= health;
+        Debug.Log("New value is: " + playerHealth.Value);
+        //else
+        //{
+        //    ulong id = NetworkManager.Singleton.LocalClientId;
+        //    Debug.Log("sender ID is:" + id);
+        //    changePlayerHealthServerRPC(id, health);
+        //    Debug.Log(playerHealth.Value);
+        //}
+    }
+    public void increaseCurrency(int money)
+    {
+        if (IsServer) currency.Value += money;
+        else
         {
-            changePlayerHealthValue(newval);
-        };
-        currency.OnValueChanged += (int oldval, int newval) =>
+            changeCurrencyServerRPC(money, true);
+        }
+    }
+    public void decreaseCurrency(int money)
+    {
+        if (IsServer) currency.Value -= money;
+        else
         {
-            changeCurrencyValue(newval);
-        };
-
-
-        currency.Value = 10;
-        playerHealth.Value = 10;
-
-        Debug.Log(currency.Value + "  " + playerHealth.Value);
-        base.OnNetworkSpawn();
+            changeCurrencyServerRPC(money, false);
+        }
     }
 
 
+    [ServerRpc(RequireOwnership = false)]
+    private void changePlayerHealthServerRPC(ulong clientId, int health)
+    {
+        Debug.Log("Changing value for" + clientId);
+        playerHealth.Value -= health;
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void changeCurrencyServerRPC(int money, bool plus)
+    {
+        if (plus)
+        {
+            currency.Value += money;
+        }
+        else currency.Value -= money;
+    }
 
-    void changeCurrencyValue(int newval)
+    void changeCurrencyValue(int oldval, int newval)
     {
         currencyTxt.text = newval.ToString();
         Debug.Log(newval);
     }
 
-    void changePlayerHealthValue(int newval)
+    void changePlayerHealthValue(int oldval ,int newval)
     {
         playerHealthTxt.text = newval.ToString();
         Debug.Log(newval  + "is the new value of health");

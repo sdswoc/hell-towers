@@ -127,7 +127,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
 
     private void reachedEnd()
     {
-        GameManager.playerHealth.Value -= (int)playerDamage;
+        gameManager.decreasePlayerHealthClientRPC((int)playerDamage);
         wave.removeEnemy(gameObject);
     }
 
@@ -167,6 +167,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     private void Start()
     {
         wave = WaveSpawnner.Instance;
+        gameManager = GameManager.gameManager;
     }
 
     private void Update()
@@ -180,12 +181,8 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
 
         //testing-purposes
         if (Input.GetKeyDown(KeyCode.K)) die();
-        
     }
 }
-
 public interface IgetObjectType{
     string isEquals();
 }
-
-

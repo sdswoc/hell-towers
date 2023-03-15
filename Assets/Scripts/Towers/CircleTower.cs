@@ -9,6 +9,8 @@ public class CircleTower : TowerTemplate,ITowerTemplate
     private float temp;
     [SerializeField] private Transform[] attackPoints = new Transform[6];
 
+    [SerializeField] private AudioSource shot;
+
     //interface functions
     public void Shoot()
     {
@@ -17,6 +19,7 @@ public class CircleTower : TowerTemplate,ITowerTemplate
             BulletPooler.spawnFromPool("type3", attackPoint.position, attackPoint.rotation);
         }
         temp = timeBetweenShots;
+        shot.Play();
     }
 
     public void Rotate() { }

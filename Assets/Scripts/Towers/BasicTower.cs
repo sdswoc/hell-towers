@@ -7,6 +7,7 @@ public class BasicTower : TowerTemplate,ITowerTemplate
     private GameObject nearestEnemy;
     float angle;
     [SerializeField] float offset;
+    [SerializeField] private AudioSource shot;
 
     //in-script variables
     private bool canShoot = true;
@@ -20,7 +21,8 @@ public class BasicTower : TowerTemplate,ITowerTemplate
         Vector3 newRotation = new Vector3(0, 0, angle);
         transform.localRotation = Quaternion.Euler(newRotation);
         BulletPooler.spawnFromPool("type1", attackPoint.position, attackPoint.rotation);
-        temp = timeBetweenShots;   
+        temp = timeBetweenShots;
+        shot.Play();
     }
 
     public void Rotate()

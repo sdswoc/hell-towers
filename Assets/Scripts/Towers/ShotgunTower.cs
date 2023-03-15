@@ -6,6 +6,7 @@ public class ShotgunTower : TowerTemplate,ITowerTemplate
 {
     [SerializeField] private float spread;
     private GameObject nearestEnemy;
+    [SerializeField] private AudioSource shot;
 
     //in-script variables
     private bool canShoot = true;
@@ -21,6 +22,7 @@ public class ShotgunTower : TowerTemplate,ITowerTemplate
             BulletPooler.spawnFromPool("type2", attackPoint.position, rotation);
         }
         temp = timeBetweenShots;
+        shot.Play();
     }
     public void Rotate()
     {
