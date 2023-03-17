@@ -104,7 +104,7 @@ MonoBehaviour:
   enemyHealth: 30
   movementSpeed: 0.6125
   killReward: 180
-  playerDamage: 0
+  playerDamage: 20
   armorHealth: 30
   coin: {fileID: 9196592774849822766, guid: 906013bac125644a18d4be6ea900e551, type: 3}
   enemyName: 

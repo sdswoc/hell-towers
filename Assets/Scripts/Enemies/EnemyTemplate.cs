@@ -32,7 +32,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     //networking variables
     private WaveSpawnner wave;
     private NetworkObject self;
-    private GameManager gameManager;
+    private Stats stas;
 
     //just-for-the-looks
     [SerializeField] private SpriteRenderer sprite;
@@ -125,17 +125,14 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
         }
         else if(armorHealth == 0)
         {
-            Debug.Log("initial value: " + enemyHealth_net.Value);
             enemyHealth_net.Value -= damage;
             enemyHealth = enemyHealth_net.Value;
-            Debug.Log("final value: " + enemyHealth_net.Value);
-            Debug.Log("enemyHealth is : " + enemyHealth);
         }
     }
 
     private void reachedEnd()
     {
-        gameManager.decreasePlayerHealthClientRPC((int)playerDamage);
+        stas.decreaseHealth((int)playerDamage);
         wave.removeEnemy(gameObject);
     }
 
@@ -147,25 +144,12 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
             {
                 initialpos = GameManager.mapGrid.GetCellCentre(0, y);
                 nextpos = GameManager.mapGrid.GetCellCentre(1, y);
-                break; //change this if you want multiple starting points
+                break;
             }
         }
-     }
-        //private void findEndPos()
-        //{
-        //    int x = 33;
-        //    for(int y = 0; y < 20; y++)
-        //    {
-        //        if (GameManager.mapGrid.GetValue(x, y) == 1) {
-        //            endPos = GameManager.mapGrid.GetCellCentre(x, y);
-        //            Debug.Log("endpos is :" + endPos);
-        //        }
-        //    }
-        //}
+    }
 
-
-
-        //in-built functions
+    //in-built functions
     private void OnEnable()
     {
         findStartPos();
@@ -175,7 +159,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     private void Start()
     {
         wave = WaveSpawnner.Instance;
-        gameManager = GameManager.gameManager;
+        stas = Stats.stats;
     }
 
     public override void OnNetworkSpawn()
@@ -187,9 +171,8 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
 
     private void Update()
     {
-        if(IsServer && enemyHealth == 0)
+        if(IsServer && enemyHealth <= 0)
         {
-            Debug.Log("die called!");
             die();
         }
 
@@ -198,10 +181,6 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
         {
             checkNextCell();
         }
-
-
-        //testing-purposes
-        if (Input.GetKeyDown(KeyCode.K)) die();
     }
 }
 public interface IgetObjectType{

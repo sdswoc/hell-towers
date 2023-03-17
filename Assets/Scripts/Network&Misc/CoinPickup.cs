@@ -9,7 +9,7 @@ public class CoinPickup : NetworkBehaviour
     private Transform playerPos;
     private float t = 0f;
     [SerializeField] private float collectSpeed;
-    WaveSpawnner wave;
+    Stats stats;
     float time;
     [SerializeField] float max_time = 4f;
 
@@ -24,7 +24,7 @@ public class CoinPickup : NetworkBehaviour
 
     private void Start()
     {
-        wave = WaveSpawnner.Instance;
+        stats = Stats.stats;
     }
 
     private void OnEnable()
@@ -41,7 +41,7 @@ public class CoinPickup : NetworkBehaviour
         }
         if(t >= 0.9f)
         {
-            //increase the currency here!!
+            stats.increaseCurrency();
             Delete();
         }
 

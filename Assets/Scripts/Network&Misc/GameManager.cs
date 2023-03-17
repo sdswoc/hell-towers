@@ -11,10 +11,12 @@ public class GameManager : NetworkBehaviour
 
     #region singleton
     public static GameManager gameManager;
+    Stats statistics;
 
     private void Awake()
     {
-        gameManager = this;       
+        gameManager = this;
+        statistics = Stats.stats;
     }
     #endregion
 
@@ -65,94 +67,19 @@ public class GameManager : NetworkBehaviour
     }
     #endregion
 
-    //this-needs-to-be-fixed
-    #region stats
-    public TMP_Text currencyTxt;
-    public TMP_Text playerHealthTxt;
-
-    public static NetworkVariable<int> currency = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    public static NetworkVariable<int> playerHealth = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
-    public override void OnNetworkSpawn()
-    {
-        playerHealth.OnValueChanged += changePlayerHealthValue;
-        currency.OnValueChanged += changeCurrencyValue;
-
-    }
-
-    [ClientRpc]
-    public void decreasePlayerHealthClientRPC(int val)
-    {
-        decreaseHealth(val);
-    }
-
-    public void decreaseHealth(int health)
-    {
-        if (IsOwner) playerHealth.Value -= health;
-        Debug.Log("New value is: " + playerHealth.Value);
-        //else
-        //{
-        //    ulong id = NetworkManager.Singleton.LocalClientId;
-        //    Debug.Log("sender ID is:" + id);
-        //    changePlayerHealthServerRPC(id, health);
-        //    Debug.Log(playerHealth.Value);
-        //}
-    }
-    public void increaseCurrency(int money)
-    {
-        if (IsServer) currency.Value += money;
-        else
-        {
-            changeCurrencyServerRPC(money, true);
-        }
-    }
-    public void decreaseCurrency(int money)
-    {
-        if (IsServer) currency.Value -= money;
-        else
-        {
-            changeCurrencyServerRPC(money, false);
-        }
-    }
-
-
-    [ServerRpc(RequireOwnership = false)]
-    private void changePlayerHealthServerRPC(ulong clientId, int health)
-    {
-        Debug.Log("Changing value for" + clientId);
-        playerHealth.Value -= health;
-    }
-    [ServerRpc(RequireOwnership = false)]
-    private void changeCurrencyServerRPC(int money, bool plus)
-    {
-        if (plus)
-        {
-            currency.Value += money;
-        }
-        else currency.Value -= money;
-    }
-
-    void changeCurrencyValue(int oldval, int newval)
-    {
-        currencyTxt.text = newval.ToString();
-        Debug.Log(newval);
-    }
-
-    void changePlayerHealthValue(int oldval ,int newval)
-    {
-        playerHealthTxt.text = newval.ToString();
-        Debug.Log(newval  + "is the new value of health");
-    }
-    #endregion
 
     //bullet-sends-info-to-this-script-and-then-this-object-reduces-health-of-the-enemy-or-the-player
     #region Tower-spawnning
     [Header("Towers-prefabs")]
 
     [SerializeField] GameObject tower1prefab;
+    [SerializeField] int tower1cost;
     [SerializeField] GameObject tower2prefab;
+    [SerializeField] int tower2cost;
     [SerializeField] GameObject tower3prefab;
+    [SerializeField] int tower3cost;
     [SerializeField] GameObject tower4prefab;
+    [SerializeField] int tower4cost;
 
     public Camera cam;
 
@@ -179,6 +106,7 @@ public class GameManager : NetworkBehaviour
                     changeGridValueClientRPC(cell, 2);
                     if (!IsServer) SpawnTowerServerRPC(1, mousePos);
                     else SpawnTowerClientRPC();
+                    statistics.decreaseCurrency(tower1cost);
                     tower1 = false;
                 }
                 else if (tower2)
@@ -188,6 +116,7 @@ public class GameManager : NetworkBehaviour
                     changeGridValueClientRPC(cell, 2);
                     if (!IsServer) SpawnTowerServerRPC(2, mousePos);
                     else SpawnTowerClientRPC();
+                    statistics.decreaseCurrency(tower2cost);
                     tower2 = false;
                 }
                 else if (tower3)
@@ -197,6 +126,7 @@ public class GameManager : NetworkBehaviour
                     changeGridValueClientRPC(cell, 2);
                     if (!IsServer) SpawnTowerServerRPC(3, mousePos);
                     else SpawnTowerClientRPC();
+                    statistics.decreaseCurrency(tower3cost);
                     tower3 = false;
                 }
      
@@ -207,6 +137,7 @@ public class GameManager : NetworkBehaviour
                     changeGridValueClientRPC(cell, 2);
                     if (!IsServer) SpawnTowerServerRPC(4, mousePos);
                     else SpawnTowerClientRPC();
+                    statistics.decreaseCurrency(tower4cost);
                     tower4 = false;
                 }
             }

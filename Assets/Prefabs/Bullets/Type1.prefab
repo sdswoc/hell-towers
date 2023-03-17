@@ -127,4 +127,5 @@ MonoBehaviour:
   movementSpeed: 5
   nameTag: type1
   canArmored: 0
-  damage: 10
+  damage: 15
+  playerDamage: 2

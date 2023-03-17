@@ -128,3 +128,4 @@ MonoBehaviour:
   nameTag: type2
   canArmored: 1
   damage: 10
+  playerDamage: 1
