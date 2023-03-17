@@ -16,6 +16,9 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     [SerializeField] private GameObject coin;
     [SerializeField] public string enemyName;
 
+    private NetworkVariable<float> enemyHealth_net = new NetworkVariable<float>();
+    private NetworkVariable<float> armorHealth_net = new NetworkVariable<float>();
+
     //change this during playtesting
     private float spread = 1f;
     private int coinValue = 10;
@@ -102,11 +105,12 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
         int no_of_coins = killReward / coinValue;
         for(int i = 0; i < no_of_coins; i++)
         {
+            if (!IsServer) break;
             randomPos = transform.position + new Vector3(Random.Range(-spread, spread), Random.Range(-spread, spread));
             GameObject obj = Instantiate(coin);
-            obj.GetComponent<NetworkObject>().Spawn();
             obj.transform.position = randomPos;
             obj.transform.rotation = Quaternion.identity;
+            obj.GetComponent<NetworkObject>().Spawn();
         }
         self = gameObject.GetComponent<NetworkObject>();
         wave.removeEnemy(gameObject);
@@ -117,11 +121,15 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     {
         if(canArmored && armorHealth > 0)
         {
-            armorHealth -= damage;
+            armorHealth_net.Value -= damage;
         }
         else if(armorHealth == 0)
         {
-            enemyHealth -= damage;
+            Debug.Log("initial value: " + enemyHealth_net.Value);
+            enemyHealth_net.Value -= damage;
+            enemyHealth = enemyHealth_net.Value;
+            Debug.Log("final value: " + enemyHealth_net.Value);
+            Debug.Log("enemyHealth is : " + enemyHealth);
         }
     }
 
@@ -170,8 +178,21 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
         gameManager = GameManager.gameManager;
     }
 
+    public override void OnNetworkSpawn()
+    {
+        enemyHealth_net.Value = enemyHealth;
+        armorHealth_net.Value = armorHealth;
+        base.OnNetworkSpawn();
+    }
+
     private void Update()
     {
+        if(IsServer && enemyHealth == 0)
+        {
+            Debug.Log("die called!");
+            die();
+        }
+
         move();
         if (transform.position == nextpos)
         {

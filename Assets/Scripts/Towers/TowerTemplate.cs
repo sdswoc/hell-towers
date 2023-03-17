@@ -20,11 +20,6 @@ public class TowerTemplate : NetworkBehaviour
     [SerializeField] protected GameObject bulletPrefab;
     [SerializeField] protected Transform attackPoint;
 
-
-    //variables only for this script
-    [SerializeField] private NetworkObject netobj;
-     
-
     //variables globally may be needed
     private CircleCollider2D area;
 
@@ -41,22 +36,12 @@ public class TowerTemplate : NetworkBehaviour
         area.radius = range;
         area.isTrigger = true;
         enemies = new List<GameObject>();
+        players = new List<GameObject>();
     }
-
-    //public override void OnNetworkSpawn()
-    //{
-    //    transform.position = Testing.mapGrid.GetCellCentre(transform.position);
-    //    netobj.transform.position = transform.position;
-
-    //    base.OnNetworkSpawn();
-    //}
 
     private void Start()
     {
         BulletPooler = OfflineObjectPooler.Instance;
-
-        netobj.transform.position = GameManager.mapGrid.GetCellCentre(transform.position);
-        //netobj.transform.position = transform.position;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -77,7 +62,7 @@ public class TowerTemplate : NetworkBehaviour
             enemies.Remove(collision.gameObject);
         }else if (collision.CompareTag("ThePlayer"))
         {
-            enemies.Remove(collision.gameObject);
+            players.Remove(collision.gameObject);
         }
     }
 }

@@ -126,3 +126,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 3
   nameTag: type2
+  canArmored: 1
+  damage: 10

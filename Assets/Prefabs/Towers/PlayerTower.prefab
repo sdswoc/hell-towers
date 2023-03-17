@@ -261,7 +261,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 453795582237635341}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.5, y: -3.5, z: 0}
+  m_LocalPosition: {x: -11.5, y: -6.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -289,9 +289,8 @@ MonoBehaviour:
   timeBetweenShots: 0.2
   damage: 15
   towerCost: 10
-  bulletPrefab: {fileID: 1531232590274734583, guid: 9425de44dd0fc412e98cc35284649273, type: 3}
+  bulletPrefab: {fileID: 1531232590274734583, guid: a71525f12ea9e4eb0a0839976ae9ff61, type: 3}
   attackPoint: {fileID: 453795581660577770}
-  netobj: {fileID: 0}
   offset: 0
   shot: {fileID: -7774331561444377520}
 --- !u!58 &453795582237635340

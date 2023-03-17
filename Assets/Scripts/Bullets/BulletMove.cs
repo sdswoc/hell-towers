@@ -6,12 +6,16 @@ public class BulletMove : MonoBehaviour
 {
     [SerializeField] private float movementSpeed;
     [SerializeField] private string nameTag;
+    GameManager gameManager;
+    [SerializeField] private bool canArmored;
+    [SerializeField] private float damage;
 
     OfflineObjectPooler pooler;
 
     private void Awake()
     {
         pooler = OfflineObjectPooler.Instance;
+        gameManager = GameManager.gameManager;
     }
 
     private void Update()
@@ -37,7 +41,9 @@ public class BulletMove : MonoBehaviour
         }
         else if (obj.CompareTag("Enemy"))
         {
-            Debug.Log("EnemyHit!");
+            Debug.Log("enemyHit!");
+            obj.GetComponent<EnemyTemplate>().takeDamage(damage, canArmored);
+            Debug.Log("damage sent!");
             pooler.destroyFromPool(nameTag, gameObject);
         }
         else if (obj.CompareTag("Map"))

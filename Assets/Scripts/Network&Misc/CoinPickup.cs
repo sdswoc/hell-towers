@@ -55,6 +55,6 @@ public class CoinPickup : NetworkBehaviour
 
     private void Delete()
     {
-        gameObject.GetComponent<NetworkObject>().Despawn();
+        if(IsServer) gameObject.GetComponent<NetworkObject>().Despawn();
     }
 }

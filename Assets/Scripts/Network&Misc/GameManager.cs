@@ -195,11 +195,7 @@ public class GameManager : NetworkBehaviour
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower3prefab;
                     changeGridValueClientRPC(cell, 2);
-                    if (!IsServer)
-                    {
-                        Debug.Log("Ye client hai bruh");
-                        SpawnTowerServerRPC(3, mousePos);
-                    }
+                    if (!IsServer) SpawnTowerServerRPC(3, mousePos);
                     else SpawnTowerClientRPC();
                     tower3 = false;
                 }
@@ -270,5 +266,7 @@ public class GameManager : NetworkBehaviour
         tower4 = true;
     }
     #endregion
+
+
 
 }
