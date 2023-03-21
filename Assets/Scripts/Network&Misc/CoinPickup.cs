@@ -9,7 +9,7 @@ public class CoinPickup : NetworkBehaviour
     private Transform playerPos;
     private float t = 0f;
     [SerializeField] private float collectSpeed;
-    Stats stats;
+    GameManager game;
     float time;
     [SerializeField] float max_time = 4f;
 
@@ -24,7 +24,7 @@ public class CoinPickup : NetworkBehaviour
 
     private void Start()
     {
-        stats = Stats.stats;
+        game = GameManager.gameManager;
     }
 
     private void OnEnable()
@@ -41,7 +41,7 @@ public class CoinPickup : NetworkBehaviour
         }
         if(t >= 0.9f)
         {
-            stats.increaseCurrency();
+            game.increaseCurrency();
             Delete();
         }
 

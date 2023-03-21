@@ -6,7 +6,7 @@ public class BulletMove : MonoBehaviour
 {
     [SerializeField] private float movementSpeed;
     [SerializeField] private string nameTag;
-    Stats stats;
+    GameManager game;
     [SerializeField] private bool canArmored;
     [SerializeField] private float damage;
     [SerializeField] private int playerDamage;
@@ -16,7 +16,7 @@ public class BulletMove : MonoBehaviour
     private void Awake()
     {
         pooler = OfflineObjectPooler.Instance;
-        stats = Stats.stats;
+        game = GameManager.gameManager;
     }
 
     private void Update()
@@ -37,7 +37,7 @@ public class BulletMove : MonoBehaviour
         GameObject obj = collision.gameObject;
         if (obj.CompareTag("ThePlayer"))
         {
-            stats.decreaseHealth(playerDamage);
+            game.decreaseHealth(playerDamage);
             pooler.destroyFromPool(nameTag, gameObject);
         }
         else if (obj.CompareTag("Enemy"))

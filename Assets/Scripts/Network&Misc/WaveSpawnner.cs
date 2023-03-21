@@ -12,11 +12,9 @@ public class WaveSpawnner : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
-        gameOverScreen.SetActive(false);
     }
     #endregion
 
-    [SerializeField] GameObject gameOverScreen;
     [SerializeField] TMP_Text WaveCounter;
 
     #region wave_info

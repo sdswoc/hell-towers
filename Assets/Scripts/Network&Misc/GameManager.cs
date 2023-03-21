@@ -11,12 +11,10 @@ public class GameManager : NetworkBehaviour
 
     #region singleton
     public static GameManager gameManager;
-    Stats statistics;
 
     private void Awake()
     {
         gameManager = this;
-        statistics = Stats.stats;
     }
     #endregion
 
@@ -24,6 +22,8 @@ public class GameManager : NetworkBehaviour
     {
         mapGrid = new Grid<int>(34, 20, 1f, new Vector3(-18, -10));
         generateMap(mapGrid);
+        playerHealthTxt.text = playerHealth.ToString();
+        currencyTxt.text = currency.ToString();
     }
 
     //functions to edit the grid
@@ -103,44 +103,57 @@ public class GameManager : NetworkBehaviour
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower1prefab;
+                    if (!IsServer) decreaseHealthServerRPC(tower1cost);
+                    else decreaseCurrency(tower1cost);
+                    tower1 = false;
                     changeGridValueClientRPC(cell, 2);
                     if (!IsServer) SpawnTowerServerRPC(1, mousePos);
                     else SpawnTowerClientRPC();
-                    statistics.decreaseCurrency(tower1cost);
-                    tower1 = false;
                 }
                 else if (tower2)
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower2prefab;
+                    if (!IsServer) decreaseHealthServerRPC(tower2cost);
+                    else decreaseCurrency(tower2cost);
+                    tower2 = false;
                     changeGridValueClientRPC(cell, 2);
                     if (!IsServer) SpawnTowerServerRPC(2, mousePos);
                     else SpawnTowerClientRPC();
-                    statistics.decreaseCurrency(tower2cost);
-                    tower2 = false;
                 }
                 else if (tower3)
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower3prefab;
+                    if (!IsServer) decreaseHealthServerRPC(tower3cost);
+                    else decreaseCurrency(tower3cost);
+                    tower3 = false;
                     changeGridValueClientRPC(cell, 2);
                     if (!IsServer) SpawnTowerServerRPC(3, mousePos);
                     else SpawnTowerClientRPC();
-                    statistics.decreaseCurrency(tower3cost);
-                    tower3 = false;
                 }
-     
+
                 else if (tower4)
                 {
                     Vector2 cell = new Vector2(mapGrid.GetCellIndex(mousePos).x, mapGrid.GetCellIndex(mousePos).y);
                     tower_to_spawn = tower4prefab;
+                    if (!IsServer) decreaseHealthServerRPC(tower4cost);
+                    else decreaseCurrency(tower4cost);
+                    tower4 = false;
                     changeGridValueClientRPC(cell, 2);
                     if (!IsServer) SpawnTowerServerRPC(4, mousePos);
                     else SpawnTowerClientRPC();
-                    statistics.decreaseCurrency(tower4cost);
-                    tower4 = false;
                 }
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            decreaseHealth(1);
+        }
+        if (playerHealth_net.Value < 0)
+        {
+            Application.Quit();
         }
     }
 
@@ -199,5 +212,55 @@ public class GameManager : NetworkBehaviour
     #endregion
 
 
+    #region Statistics
+    NetworkVariable<int> playerHealth_net = new NetworkVariable<int>();
+    NetworkVariable<int> currency_net = new NetworkVariable<int>();
 
+    [SerializeField] private int playerHealth;
+    [SerializeField] private int currency;
+
+    [SerializeField] private TMP_Text playerHealthTxt;
+    [SerializeField] private TMP_Text currencyTxt;
+
+    public override void OnNetworkSpawn()
+    {
+        playerHealth_net.Value = playerHealth;
+        currency_net.Value = currency;
+
+        playerHealth_net.OnValueChanged += changePlayerHealthTxt;
+        currency_net.OnValueChanged += changeCurrencyTxt;
+
+        base.OnNetworkSpawn();
+    }
+
+    private void changePlayerHealthTxt(int oldval, int newval)
+    {
+        playerHealthTxt.text = newval.ToString();
+    }
+    private void changeCurrencyTxt(int oldval, int newval)
+    {
+        currencyTxt.text = newval.ToString();
+    }
+
+
+    public void decreaseHealth(int damage)
+    {
+        if (IsServer) playerHealth_net.Value -= damage;
+    }
+    public void increaseCurrency()
+    {
+        if (IsServer) currency_net.Value += 10;
+    }
+    public void decreaseCurrency(int cost)
+    {
+        if (IsServer) currency_net.Value -= cost;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void decreaseHealthServerRPC(int cost)
+    {
+        decreaseCurrency(cost);
+    }
+
+    #endregion
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class Stats : NetworkBehaviour
 {
@@ -72,6 +73,10 @@ public class Stats : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.K))
         {
             decreaseHealth(1);
+        }
+        if(playerHealth_net.Value < 0)
+        {
+            Application.Quit();
         }
     }
 }

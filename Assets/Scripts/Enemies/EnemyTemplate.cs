@@ -32,7 +32,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     //networking variables
     private WaveSpawnner wave;
     private NetworkObject self;
-    private Stats stas;
+    private GameManager game;
 
     //just-for-the-looks
     [SerializeField] private SpriteRenderer sprite;
@@ -132,7 +132,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
 
     private void reachedEnd()
     {
-        stas.decreaseHealth((int)playerDamage);
+        game.decreaseHealth((int)playerDamage);
         wave.removeEnemy(gameObject);
     }
 
@@ -159,7 +159,7 @@ public class EnemyTemplate : NetworkBehaviour, IgetObjectType
     private void Start()
     {
         wave = WaveSpawnner.Instance;
-        stas = Stats.stats;
+        game = GameManager.gameManager;
     }
 
     public override void OnNetworkSpawn()

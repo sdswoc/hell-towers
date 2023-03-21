@@ -39,8 +39,8 @@ public class TowerPlacementScript : NetworkBehaviour
 
     private void Spawn(int i)
     {
-        tower = towers[i];
-        net_towers[i].SpawnWithOwnership(OwnerClientId);
+        tower = towers[i - 1];
+        net_towers[i - 1].Spawn();
         tower_being_placed = true;
     }
 }
